@@ -1,0 +1,120 @@
+<html>
+<head>
+  <script>
+  window.onload = function() {
+    console.log("LOADED");
+
+    //Configuration variables
+    var updateInterval = 20 //in ms
+    var numberElements = 200;
+
+    //Globals
+    var updateCount = 0;
+
+    // Chart Objects
+    var xAccelChart = $("#xAccelChart");
+
+    //chart instances & configuration
+
+    var commonOptions = {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              displayFormats: {
+                millisecond: 'mm:ss:SSS'
+              }
+            }
+          }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        },
+        legend: {display: false},
+        tooltips:{
+          enabled: false
+        }
+    };
+    var xAccelChartInstance = new Chart(xAccelChart, {
+        type: 'line',
+        data: {
+          datasets: [{
+              label: "X Acceleration",
+              data: 0,
+              fill: false,
+              borderColor: '#343e9a',
+              borderWidth: 1
+          }]
+        },
+        options: Object.assign({}, commonOptions, {
+          title:{
+            display: true,
+            text: "Acceleration - X",
+            fontSize: 18
+          }
+        })
+    });
+
+
+    function addData(data) {
+      if(data){
+        xAccelChartInstance.data.labels.push(new Date());
+        xAccelChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data['xA'])});
+        if(updateCount > numberElements){
+          xAccelChartInstance.data.labels.shift();
+          xAccelChartInstance.data.datasets[0].data.shift();
+        }
+        else updateCount++;
+        xAccelChartInstance.update();
+      }
+    };
+
+    function updateData() {
+      console.log("Update Data");
+      $.getJSON("accelGenerator.php", addData);
+      setTimeout(updateData,updateInterval);
+    }
+
+    updateData();
+  }
+</script>
+  <style>
+  .container{
+    display:flex;
+
+  }
+
+
+  .x{
+    height: 400px;
+    width: 800px;
+    text-align: center;
+    background-color: rgba(235, 113, 101, 0.73);
+    margin: 10px;
+  }
+
+
+  h1{
+    text-align: center;
+  }
+
+  </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+</head>
+<body>
+  
+  <div id="accelContainer" class="container">
+
+    <div id="xAccel" class="x">
+
+      <canvas id="xAccelChart"></canvas>
+    </div><!--xAccel-->
+
+
+
+</body>
+</html>
