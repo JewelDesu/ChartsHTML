@@ -18,15 +18,18 @@
 
     var commonOptions = {
         scales: {
-            xAxes: [{
-              ticks: {
-                beginAtZero:true
+          xAxes: [{
+            type: 'time',
+            time: {
+              displayFormats: {
+                millisecond: 'hh:mm'
               }
-            }],
+            }
+          }],
             yAxes: [{
-              ticks: {
-                beginAtZero:true
-              }
+                ticks: {
+                    beginAtZero:true
+                }
             }]
         },
         legend: {display: false},
@@ -57,7 +60,7 @@
 
     function addData(data) {
       if(data){
-        //xAccelChartInstance.data.labels.push(new Date());
+        xAccelChartInstance.data.labels.push(new Date());
         xAccelChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data['xA'])});
         if(updateCount > numberElements){
           xAccelChartInstance.data.labels.shift();
