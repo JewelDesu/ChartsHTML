@@ -5,7 +5,7 @@
     console.log("LOADED");
 
     //Configuration variables
-    var updateInterval = 100 //in ms
+    var updateInterval = 1000 //in ms
     var numberElements = 30;
 
     //Globals
@@ -41,7 +41,7 @@
         type: 'line',
         data: {
           datasets: [{
-              label: "X Acceleration",
+              label: "Temp",
               data: 0,
               fill: false,
               borderColor: '#343e9a',
@@ -51,7 +51,7 @@
         options: Object.assign({}, commonOptions, {
           title:{
             display: true,
-            text: "Acceleration - X",
+            text: "Temp",
             fontSize: 18
           }
         })
