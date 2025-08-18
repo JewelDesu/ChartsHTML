@@ -19,17 +19,14 @@
     var commonOptions = {
         scales: {
           xAxes: [{
-            type: 'time',
-            time: {
-              displayFormats: {
-                millisecond: 'mm:ss'
-              }
+            ticks: {
+              beginAtZero:true
             }
           }],
             yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
+              ticks: {
+                beginAtZero:true
+              }
             }]
         },
         legend: {display: false},
