@@ -12,7 +12,9 @@
     var updateCount = 0;
 
     // Chart Objects
-    var xAccelChart = $("#xAccelChart");
+    var tempChart = $("#tempChart");
+    var humChart = $("#humChart");
+    var pressChart = $("#pressChart");
 
     //chart instances & configuration
 
@@ -37,7 +39,7 @@
           enabled: false
         }
     };
-    var xAccelChartInstance = new Chart(xAccelChart, {
+    var tempChartInstance = new Chart(tempChart, {
         type: 'line',
         data: {
           datasets: [{
@@ -57,23 +59,72 @@
         })
     });
 
+    var humChartInstance = new Chart(humAccelChart, {
+        type: 'line',
+        data: {
+          datasets: [{
+              label: "Y Acceleration",
+              data: 0,
+              fill: false,
+              borderColor: '#343e9a',
+              borderWidth: 1
+          }]
+        },
+        options: Object.assign({}, commonOptions, {
+          title:{
+            display: true,
+            text: "Acceleration - Y",
+            fontSize: 18
+          }
+        })    });
+
+    var pressChartInstance = new Chart(pressChart, {
+        type: 'line',
+        data: {
+          datasets: [{
+              label: "Z Acceleration",
+              data: 0,
+              fill: false,
+              borderColor: '#343e9a',
+              borderWidth: 1
+          }]
+        },
+        options: Object.assign({}, commonOptions, {
+          title:{
+            display: true,
+            text: "Acceleration - Z",
+            fontSize: 18
+          }
+        })
+      });
+
 
     function addData(data) {
       if(data){
-        xAccelChartInstance.data.labels.push(new Date());
-        xAccelChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data['xA'])});
+        tempChartInstance.data.labels.push(new Date());
+        tempChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data['temp'])});
+        humChartInstance.data.labels.push(new Date());
+        humChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data['hum'])});
+        pressChartInstance.data.labels.push(new Date());
+        pressChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data['press'])});
         if(updateCount > numberElements){
-          xAccelChartInstance.data.labels.shift();
-          xAccelChartInstance.data.datasets[0].data.shift();
+          tempChartInstance.data.labels.shift();
+          tempChartInstance.data.datasets[0].data.shift();
+          humChartInstance.data.labels.shift();
+          humChartInstance.data.datasets[0].data.shift();
+          pressChartInstance.data.labels.shift();
+          pressChartInstance.data.datasets[0].data.shift();
         }
         else updateCount++;
-        xAccelChartInstance.update();
+        tempChartInstance.update();
+        humChartInstance.update();
+        pressChartInstance.update();
       }
     };
 
     function updateData() {
       console.log("Update Data");
-      $.getJSON("accelGenerator.php", addData);
+      $.getJSON("dataFetch.php", addData);
       setTimeout(updateData,updateInterval);
     }
 
@@ -87,7 +138,21 @@
   }
 
 
-  .x{
+  .a{
+    height: 400px;
+    width: 800px;
+    text-align: center;
+    background-color: rgba(51, 45, 45, 0.185);
+    margin: 10px;
+  }
+  .b{
+    height: 400px;
+    width: 800px;
+    text-align: center;
+    background-color: rgba(51, 45, 45, 0.185);
+    margin: 10px;
+  }
+  .c{
     height: 400px;
     width: 800px;
     text-align: center;
@@ -107,12 +172,18 @@
 </head>
 <body>
   
-  <div id="accelContainer" class="container">
+  <div class="container">
 
-    <div id="xAccel" class="x">
+  <div id="chart" class="a">
+    <canvas id="tempChart"></canvas>
+  </div>
+  <div id="chart" class="b">
+    <canvas id="humChart"></canvas>
+  </div>
+  <div id="chart" class="c">
+    <canvas id="pressChart"></canvas>
+  </div>
 
-      <canvas id="xAccelChart"></canvas>
-    </div>
   <form action="input.php" method="post">
   <label for="input">Input</label><br>
   <input type="text" id="input" name="input"><br>
