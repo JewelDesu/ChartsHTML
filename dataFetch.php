@@ -1,25 +1,38 @@
 <?php
 
-  
-$array = array();
+// Map sensor file paths
+$files = [
+    'temp' => __DIR__ . '/tmp/m4/temp',
+    'hum'  => __DIR__ . '/tmp/m4/hum',
+    'press'=> __DIR__ . '/tmp/m4/press'
+];
 
-$temp = "/tmp/m4/temp";
-$hum = "/tmp/m4/hum";
-$press = "/tmp/m4/press";
-$filedata1 = file_get_contents($temp);
-$filedata2 = file_get_contents($hum);
-$filedata3 = file_get_contents($press);
-//$writefile = fopen("/dev/ttyRPMSG0","w");
+$data = [];
 
+// Loop over each sensor file
+foreach ($files as $key => $filePath) {
+    // Default value if file is missing
+    $value = "N/A";
 
-//fwrite($writefile, $val);
-//fclose($writefile);
+    if (file_exists($filePath)) {
+        // Open the file for reading
+        $fp = fopen($filePath, "r");
+        if ($fp) {
+            // Acquire shared lock (other process can still write later)
+            if (flock($fp, LOCK_SH)) {
+                // Read contents safely
+                $value = trim(fread($fp, filesize($filePath)));
+                flock($fp, LOCK_UN); // release lock
+            }
+            fclose($fp);
+        }
+    }
 
-$array['temp'] = $filedata1;
-$array['hum'] = $filedata2;
-$array['press'] = $filedata3;
+    $data[$key] = $value;
+}
 
-header('Content-type: application/json');
-echo json_encode($array);
+// Return as JSON
+header('Content-Type: application/json');
+echo json_encode($data);
 
 ?>
